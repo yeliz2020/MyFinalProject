@@ -4,7 +4,10 @@ using System.Text;
 
 using Business.Abstact;
 using Business.Constants;
+using Business.ValidationRules.FluentValidation;
 
+using Core.Aspects.Autofac.Validation;
+using Core.CrossCuttingConcerns.Validation;
 using Core.Utilities.Results;
 
 using DataAccess.Abstract;
@@ -12,6 +15,8 @@ using DataAccess.Concrete.InMemory;
 
 using Entities.Concrete;
 using Entities.DTOs;
+
+using FluentValidation;
 
 namespace Business.Concrete
 {
@@ -25,16 +30,14 @@ namespace Business.Concrete
             _productDal = productDal;
         }
         //[LogAspect]-->AOP
-        
+
+
+        [ValidationAspect(typeof(ProductValidator))]
         public IResult Add(Product product)
         {
+            //business codes-- iş ihtiyaçlarının kontrolü burada yapılır
+            //validation--nesnenin yapısal olarak uygun olup olmadığı
 
-            if (product.ProductName.Length<2)
-            {
-                //magic strings
-                return new ErrorResult(Messages.ProductNameInvalid);
-            }
-            //business codes
             _productDal.Add(product);
 
             
